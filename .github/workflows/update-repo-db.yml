@@ -17,6 +17,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: true
 
       - name: Install repository tools
         run: |
@@ -24,8 +27,9 @@ jobs:
 
       - name: Rebuild repository database
         run: |
-          shopt -s nullglob
+          cd "$GITHUB_WORKSPACE"
 
+          shopt -s nullglob
           packages=(x86_64/*.pkg.tar.zst)
 
           if [ "${#packages[@]}" -eq 0 ]; then
@@ -36,11 +40,10 @@ jobs:
           repo-add x86_64/hiroki.db.tar.gz "${packages[@]}"
 
           # repo-add sembolik link oluşturabilir.
-          # GitHub Pages için normal dosya oluşturuyoruz.
+          # GitHub Pages için normal dosya oluştur.
           rm -f x86_64/hiroki.db
           cp x86_64/hiroki.db.tar.gz x86_64/hiroki.db
 
-          # .files veritabanı mevcutsa normal dosyaya çevir.
           rm -f x86_64/hiroki.files
 
           if [ -f x86_64/hiroki.files.tar.gz ]; then
@@ -49,8 +52,12 @@ jobs:
 
       - name: Commit updated database
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cd "$GITHUB_WORKSPACE"
+
+          test -d .git
+
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
           git add -A x86_64/
 
@@ -58,5 +65,5 @@ jobs:
             echo "No database changes to commit."
           else
             git commit -m "Update HirokiOS repository database"
-            git push
+            git push origin HEAD:${GITHUB_REF_NAME}
           fi
