@@ -1,1 +1,1 @@
-sudo tar -xvf pacman-*.pkg.tar.zst usr/lib/libalpm.so.16 --strip-components=1 -C /usr/lib/
+sudo cp /usr/lib/libalpm.so.16 /usr/lib32/
