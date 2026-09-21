@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HirokiOS Packages</title>
+  <style>
+    :root { color-scheme: dark; --bg:#0b1020; --panel:#121a2d; --line:#273654; --text:#e8eefc; --muted:#9eafd0; --accent:#ffd166; --accent2:#63d5ff; --danger:#ff8b8b; }
+    * { box-sizing:border-box; }
+    body { margin:0; min-height:100vh; background:linear-gradient(145deg,#08101d,#17213b 55%,#291b27); color:var(--text); font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif; }
+    main { width:min(1000px,calc(100% - 32px)); margin:0 auto; padding:42px 0 64px; }
+    header { display:flex; gap:18px; align-items:center; margin-bottom:28px; }
+    .banana { display:grid; place-items:center; width:64px; height:64px; border-radius:20px; background:#ffd166; color:#3b2b00; font-size:34px; box-shadow:0 12px 30px #0005; }
+    h1 { margin:0; font-size:clamp(28px,5vw,46px); letter-spacing:-.04em; }
+    .subtitle { color:var(--muted); margin:.25rem 0 0; }
+    .card { background:#10192bdd; border:1px solid var(--line); border-radius:18px; padding:22px; margin:16px 0; box-shadow:0 14px 35px #0003; }
+    .meta { display:flex; flex-wrap:wrap; gap:9px; margin-top:14px; }
+    .pill { border:1px solid var(--line); border-radius:999px; padding:5px 10px; color:var(--muted); font-size:13px; }
+    .pill strong { color:var(--accent); }
+    code, pre { font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace; }
+    pre { overflow:auto; padding:15px; border:1px solid var(--line); border-radius:12px; background:#080d18; color:#d9e5ff; }
+    .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+    input { flex:1 1 240px; min-width:0; padding:11px 13px; border:1px solid var(--line); border-radius:10px; background:#0a1221; color:var(--text); outline:none; }
+    input:focus { border-color:var(--accent2); }
+    .status { color:var(--muted); font-size:14px; }
+    .status.error { color:var(--danger); }
+    .package { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 0; border-bottom:1px solid #22304b; }
+    .package:last-child { border-bottom:0; }
+    .name { overflow-wrap:anywhere; }
+    .kind { color:var(--accent2); font-size:12px; text-transform:uppercase; letter-spacing:.08em; }
+    a { color:var(--accent); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .empty { color:var(--muted); padding:18px 0; }
+    footer { color:var(--muted); font-size:13px; margin-top:28px; }
+    @media (max-width:600px) { main { width:min(100% - 20px,1000px); padding-top:24px; } .package { align-items:flex-start; flex-direction:column; } }
+  </style>
+</head>
+<body>
+<main>
+  <header>
+    <div class="banana" aria-hidden="true">🍌</div>
+    <div>
+      <h1>Muz · HirokiOS</h1>
+      <p class="subtitle">Arch uyumlu paket deposu</p>
+    </div>
+  </header>
+
+  <section class="card">
+    <div class="toolbar">
+      <div>
+        <strong id="repo-title">Depo okunuyor…</strong>
+        <div class="status" id="status">GitHub deposunun x86_64 klasörü taranıyor.</div>
+      </div>
+      <input id="search" type="search" placeholder="Paketlerde ara…" aria-label="Paketlerde ara">
+    </div>
+    <div class="meta">
+      <span class="pill">Mimari: <strong>x86_64</strong></span>
+      <span class="pill">Kaynak: <strong id="branch-pill">main</strong></span>
+      <span class="pill">Paket: <strong id="count">0</strong></span>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>HirokiOS paketleri</h2>
+    <div id="packages" class="empty">Yükleniyor…</div>
+  </section>
+
+  <section class="card">
+    <h2>Muz yapılandırması</h2>
+    <p>Bu adresi Muz/Pacman config dosyanıza ekleyin:</p>
+    <pre id="config">[HirokiOS]
+SigLevel = Never
+Server = yükleniyor…/$arch</pre>
+    <p class="status">Bu sayfa yalnızca insanlara liste gösterir. Muz paketleri doğrudan <code>hiroki.db</code> ve paket dosyalarından okur; HTML dosyası DB oluşturmaz.</p>
+  </section>
+
+  <footer>
+    Paket veritabanı GitHub Actions ile güncellenir. Yeni paket eklemek için
+    <code>x86_64/</code> klasörüne <code>*.pkg.tar.zst</code> koyup push edin.
+  </footer>
+</main>
+<script>
+(() => {
+  // GitHub Pages URL'sinden owner/repo/branch bilgisini çıkarır.
+  // Örnek: owner.github.io/repo/ -> owner + repo.
+  const hostParts = location.hostname.split('.');
+  const pageOwner = hostParts.length >= 3 && hostParts[1] === 'github' ? hostParts[0] : 'Hiroki-Systems';
+  const pathParts = location.pathname.split('/').filter(Boolean);
+  const pageRepo = hostParts.length >= 3 && hostParts[1] === 'github' && pathParts[0] ? pathParts[0] : 'HirokiOS-Packages';
+  const branch = 'main';
+  const archPath = 'x86_64';
+  const apiBase = `https://api.github.com/repos/${encodeURIComponent(pageOwner)}/${encodeURIComponent(pageRepo)}`;
+  const pagesBase = `https://${pageOwner}.github.io/${pageRepo}`;
+  const rawBase = `https://raw.githubusercontent.com/${pageOwner}/${pageRepo}/${branch}`;
+  const packagesEl = document.getElementById('packages');
+  const statusEl = document.getElementById('status');
+  const titleEl = document.getElementById('repo-title');
+  const countEl = document.getElementById('count');
+  const searchEl = document.getElementById('search');
+  const configEl = document.getElementById('config');
+  const branchEl = document.getElementById('branch-pill');
+  let packageFiles = [];
+
+  titleEl.textContent = `${pageOwner}/${pageRepo}`;
+  branchEl.textContent = branch;
+  configEl.textContent = `[HirokiOS]\nSigLevel = Never\nServer = ${pagesBase}/$arch`;
+
+  function bytes(n) {
+    if (!Number.isFinite(n)) return '';
+    if (n < 1024) return `${n} B`;
+    if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KiB`;
+    return `${(n / 1024 / 1024).toFixed(1)} MiB`;
+  }
+
+  function show(files) {
+    const query = searchEl.value.trim().toLowerCase();
+    const visible = files.filter(file => file.name.toLowerCase().includes(query));
+    countEl.textContent = visible.filter(file => file.name.endsWith('.pkg.tar.zst')).length;
+    if (!visible.length) {
+      packagesEl.innerHTML = '<div class="empty">Bu klasörde henüz paket bulunamadı.</div>';
+      return;
+    }
+    packagesEl.innerHTML = visible.map(file => {
+      const url = `${pagesBase}/${archPath}/${encodeURIComponent(file.name)}`;
+      const kind = file.name.endsWith('.pkg.tar.zst') ? 'paket' : 'depo dosyası';
+      return `<div class="package">
+        <div><div class="kind">${kind}</div><div class="name"><a href="${url}" download>${file.name}</a></div></div>
+        <span class="status">${bytes(file.size)}</span>
+      </div>`;
+    }).join('');
+  }
+
+  async function load() {
+    try {
+      const response = await fetch(`${apiBase}/contents/${archPath}?ref=${encodeURIComponent(branch)}`, {
+        headers: { 'Accept': 'application/vnd.github+json' }
+      });
+      if (!response.ok) throw new Error(`GitHub API HTTP ${response.status}`);
+      const entries = await response.json();
+      packageFiles = entries.filter(entry => entry.type === 'file');
+      statusEl.textContent = `${packageFiles.length} dosya bulundu.`;
+      show(packageFiles);
+    } catch (error) {
+      statusEl.textContent = `Depo okunamadı: ${error.message}`;
+      statusEl.className = 'status error';
+      packagesEl.innerHTML = '<div class="empty">GitHub API erişimini, owner/repo adını ve Pages ayarlarını kontrol edin.</div>';
+    }
+  }
+
+  searchEl.addEventListener('input', () => show(packageFiles));
+  load();
+})();
+</script>
+</body>
+</html>
