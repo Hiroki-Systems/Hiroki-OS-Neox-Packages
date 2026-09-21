@@ -35,21 +35,23 @@ jobs:
 
           repo-add x86_64/hiroki.db.tar.gz "${packages[@]}"
 
-          # Pacman/Muz için DB dosyasını normal dosya olarak tut.
-          cp -f x86_64/hiroki.db.tar.gz x86_64/hiroki.db
+          # repo-add sembolik link oluşturabilir.
+          # GitHub Pages için normal dosya oluşturuyoruz.
+          rm -f x86_64/hiroki.db
+          cp x86_64/hiroki.db.tar.gz x86_64/hiroki.db
 
-cp -f x86_64/hiroki.db.tar.gz x86_64/hiroki.db
+          # .files veritabanı mevcutsa normal dosyaya çevir.
+          rm -f x86_64/hiroki.files
 
-if [ -f x86_64/hiroki.files.tar.gz ]; then
-  cp -f x86_64/hiroki.files.tar.gz x86_64/hiroki.files
-fi
+          if [ -f x86_64/hiroki.files.tar.gz ]; then
+            cp x86_64/hiroki.files.tar.gz x86_64/hiroki.files
+          fi
 
       - name: Commit updated database
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          # .files dosyası olmasa bile hata vermemesi için tüm x86_64 klasörünü ekle.
           git add -A x86_64/
 
           if git diff --cached --quiet; then
