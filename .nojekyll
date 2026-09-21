@@ -1,1 +1,1 @@
-sudo cp /usr/lib/libalpm.so.16 /usr/lib32/
+sudo tar -xvf pacman-*.pkg.tar.zst -C / --exclude='.PKGINFO' --exclude='.INSTALL'
