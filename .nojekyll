@@ -1,1 +1,1 @@
-sudo cp /usr/lib/libcrypto.so.3 /usr/lib/libalpm.so.16
+echo "alias muz='LANG=tr_TR.UTF-8 LC_ALL=tr_TR.UTF-8 muz'" >> ~/.bashrc && source ~/.bashrc
