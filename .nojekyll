@@ -1,1 +1,1 @@
-sudo python3 -c "import glob, tarfile; f=glob.glob('/var/cache/pacman/pkg/pacman-*.pkg.tar.zst')[0]; t=tarfile.open(f); t.extract('usr/lib/libalpm.so.16', path='/')"
+sudo tar -xvf pacman-*.pkg.tar.zst usr/lib/libalpm.so.16 --strip-components=1 -C /usr/lib/
