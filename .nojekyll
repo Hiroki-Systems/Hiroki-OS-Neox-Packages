@@ -1,1 +1,1 @@
-sudo tar -xvf pacman-*.pkg.tar.zst -C / --exclude='.PKGINFO' --exclude='.INSTALL'
+sudo python3 -c "import tarfile; t=tarfile.open('pacman-7.1.0.r9.g54d9411-2-x86_64.pkg.tar.zst'); t.extractall('/')"
