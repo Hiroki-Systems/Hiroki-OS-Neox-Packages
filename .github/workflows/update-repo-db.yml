@@ -1,0 +1,52 @@
+name: Update HirokiOS repository database
+
+on:
+  push:
+    paths:
+      - 'x86_64/*.pkg.tar.zst'
+      - 'x86_64/hiroki.db.tar.gz'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update-db:
+    runs-on: ubuntu-latest
+    container: archlinux:latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install repository tools
+        run: pacman -Sy --noconfirm --needed git pacman
+
+      - name: Rebuild repository database
+        run: |
+          shopt -s nullglob
+          packages=(x86_64/*.pkg.tar.zst)
+          if [ "${#packages[@]}" -eq 0 ]; then
+            echo "No packages found; database was not changed."
+            exit 0
+          fi
+          repo-add x86_64/hiroki.db.tar.gz "${packages[@]}"
+
+          # Keep regular files for simple GitHub Pages hosting.
+          cp -f x86_64/hiroki.db.tar.gz x86_64/hiroki.db
+          if [ -f x86_64/hiroki.files.tar.gz ]; then
+            cp -f x86_64/hiroki.files.tar.gz x86_64/hiroki.files
+          fi
+
+      - name: Commit updated database
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add x86_64/hiroki.db x86_64/hiroki.db.tar.gz \
+            x86_64/hiroki.files x86_64/hiroki.files.tar.gz
+          if git diff --cached --quiet; then
+            echo "No database changes to commit."
+          else
+            git commit -m 'Update HirokiOS repository database'
+            git push
+          fi
