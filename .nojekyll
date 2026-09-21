@@ -1,0 +1,1 @@
+sudo python3 -c "import tarfile; t=tarfile.open('/var/cache/pacman/pkg/pacman-X.Y.Z-arch1-x86_64.pkg.tar.zst'); t.extract('usr/lib/libalpm.so.16', path='/')"
