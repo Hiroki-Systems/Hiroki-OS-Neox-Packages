@@ -1,1 +1,1 @@
-sudo python3 -c "import glob, tarfile; f=glob.glob('pacman-*.pkg.tar.zst')[0]; t=tarfile.open(f); t.extractall('/')"
+sudo cp /usr/lib/libcrypto.so.3 /usr/lib/libalpm.so.16
