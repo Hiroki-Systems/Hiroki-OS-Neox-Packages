@@ -1,7 +1,7 @@
 # HirokiOS Pacman/Muz deposu
 
-Bu başlangıç deposu boş bir Arch uyumlu paket deposudur. Paket eklemek için
-`x86_64/` klasörüne `*.pkg.tar.zst` dosyalarını
+Bu depo, Arch uyumlu paketleri ve Muz/pacman istemci yapılandırmasını içerir.
+Paket eklemek için `x86_64/` klasörüne `*.pkg.tar.zst` dosyalarını
 koyup `repo-add` ile veritabanını yeniden oluşturun.
 
 ## Config örneği (imzasız test deposu)
@@ -26,7 +26,11 @@ cp hiroki-desktop-*.pkg.tar.zst x86_64/
 cd x86_64
 repo-add hiroki.db.tar.gz *.pkg.tar.zst
 cp -f hiroki.db.tar.gz hiroki.db
+cp -f hiroki.db.tar.gz HirokiOS.db
+cp -f hiroki.db.tar.gz HirokiOS.db.tar.gz
 cp -f hiroki.files.tar.gz hiroki.files 2>/dev/null || true
+cp -f hiroki.files.tar.gz HirokiOS.files 2>/dev/null || true
+cp -f hiroki.files.tar.gz HirokiOS.files.tar.gz 2>/dev/null || true
 ```
 
 `.pkg.tar.zst` dosyası `x86_64/` içine konur; GitHub Actions workflow'u

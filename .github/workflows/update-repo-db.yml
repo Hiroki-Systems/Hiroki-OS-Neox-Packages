@@ -41,15 +41,17 @@ jobs:
 
           # repo-add sembolik link oluşturabilir.
           # GitHub Pages için normal dosya oluştur.
-          rm -f x86_64/hiroki.db x86_64/HirokiOS.db
+          rm -f x86_64/hiroki.db x86_64/HirokiOS.db x86_64/HirokiOS.db.tar.gz
           cp x86_64/hiroki.db.tar.gz x86_64/hiroki.db
           cp x86_64/hiroki.db.tar.gz x86_64/HirokiOS.db
+          cp x86_64/hiroki.db.tar.gz x86_64/HirokiOS.db.tar.gz
 
-          rm -f x86_64/hiroki.files x86_64/HirokiOS.files
+          rm -f x86_64/hiroki.files x86_64/HirokiOS.files x86_64/HirokiOS.files.tar.gz
 
           if [ -f x86_64/hiroki.files.tar.gz ]; then
             cp x86_64/hiroki.files.tar.gz x86_64/hiroki.files
             cp x86_64/hiroki.files.tar.gz x86_64/HirokiOS.files
+            cp x86_64/hiroki.files.tar.gz x86_64/HirokiOS.files.tar.gz
           fi
 
           # repo-add yedek dosyalarını Git'e dahil etme.
