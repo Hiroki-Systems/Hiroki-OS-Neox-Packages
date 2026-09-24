@@ -60,7 +60,13 @@ jobs:
           set -eux
           cd "$GITHUB_WORKSPACE"
 
-          git rev-parse --is-inside-work-tree
+          # Arch container, git kurulmadan önce checkout yapıldığı için
+          # checkout dosyaları .git olmadan gelebilir. Repo geçmişini
+          # kurmadan önce git'i kurup yeniden bağlıyoruz.
+          git init -b "${GITHUB_REF_NAME:-main}"
+          git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "+refs/heads/${GITHUB_REF_NAME:-main}:refs/remotes/origin/${GITHUB_REF_NAME:-main}"
+          git reset --mixed "origin/${GITHUB_REF_NAME:-main}"
 
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
