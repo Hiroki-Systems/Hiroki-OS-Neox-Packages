@@ -65,6 +65,7 @@ jobs:
           # Arch container, git kurulmadan önce checkout yapıldığı için
           # checkout dosyaları .git olmadan gelebilir. Repo geçmişini
           # kurmadan önce git'i kurup yeniden bağlıyoruz.
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
           git init -b "${GITHUB_REF_NAME:-main}"
           git remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           git fetch --no-tags --depth=1 origin "+refs/heads/${GITHUB_REF_NAME:-main}:refs/remotes/origin/${GITHUB_REF_NAME:-main}"
