@@ -52,8 +52,12 @@ jobs:
             cp x86_64/hiroki.files.tar.gz x86_64/HirokiOS.files
           fi
 
+          # repo-add yedek dosyalarını Git'e dahil etme.
+          rm -f x86_64/*.old
+
       - name: Commit updated database
         run: |
+          set -eux
           cd "$GITHUB_WORKSPACE"
 
           test -d .git
@@ -61,11 +65,13 @@ jobs:
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          git add -A x86_64/
+          git add -A -- x86_64
+          git status --short
+          git diff --cached --stat
 
           if git diff --cached --quiet; then
             echo "No database changes to commit."
           else
             git commit -m "Update HirokiOS repository database"
-            git push origin HEAD:${GITHUB_REF_NAME}
+            git push origin "HEAD:refs/heads/${GITHUB_REF_NAME:-main}"
           fi
