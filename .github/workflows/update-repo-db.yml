@@ -60,7 +60,7 @@ jobs:
           set -eux
           cd "$GITHUB_WORKSPACE"
 
-          test -d .git
+          git rev-parse --is-inside-work-tree
 
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
