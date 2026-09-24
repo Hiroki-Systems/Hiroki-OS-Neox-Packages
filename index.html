@@ -4,79 +4,265 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>HirokiOS Packages</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    :root { color-scheme: dark; --bg:#0b1020; --panel:#121a2d; --line:#273654; --text:#e8eefc; --muted:#9eafd0; --accent:#ffd166; --accent2:#63d5ff; --danger:#ff8b8b; }
-    * { box-sizing:border-box; }
-    body { margin:0; min-height:100vh; background:linear-gradient(145deg,#08101d,#17213b 55%,#291b27); color:var(--text); font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif; }
-    main { width:min(1000px,calc(100% - 32px)); margin:0 auto; padding:42px 0 64px; }
-    header { display:flex; gap:18px; align-items:center; margin-bottom:28px; }
-    .banana { display:grid; place-items:center; width:64px; height:64px; border-radius:20px; background:#ffd166; color:#3b2b00; font-size:34px; box-shadow:0 12px 30px #0005; }
-    h1 { margin:0; font-size:clamp(28px,5vw,46px); letter-spacing:-.04em; }
-    .subtitle { color:var(--muted); margin:.25rem 0 0; }
-    .card { background:#10192bdd; border:1px solid var(--line); border-radius:18px; padding:22px; margin:16px 0; box-shadow:0 14px 35px #0003; }
-    .meta { display:flex; flex-wrap:wrap; gap:9px; margin-top:14px; }
-    .pill { border:1px solid var(--line); border-radius:999px; padding:5px 10px; color:var(--muted); font-size:13px; }
-    .pill strong { color:var(--accent); }
-    code, pre { font:13px/1.55 ui-monospace,SFMono-Regular,Menlo,monospace; }
-    pre { overflow:auto; padding:15px; border:1px solid var(--line); border-radius:12px; background:#080d18; color:#d9e5ff; }
-    .toolbar { display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
-    input { flex:1 1 240px; min-width:0; padding:11px 13px; border:1px solid var(--line); border-radius:10px; background:#0a1221; color:var(--text); outline:none; }
-    input:focus { border-color:var(--accent2); }
-    .status { color:var(--muted); font-size:14px; }
-    .status.error { color:var(--danger); }
-    .package { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px 0; border-bottom:1px solid #22304b; }
-    .package:last-child { border-bottom:0; }
-    .name { overflow-wrap:anywhere; }
-    .kind { color:var(--accent2); font-size:12px; text-transform:uppercase; letter-spacing:.08em; }
-    a { color:var(--accent); text-decoration:none; }
-    a:hover { text-decoration:underline; }
-    .empty { color:var(--muted); padding:18px 0; }
-    footer { color:var(--muted); font-size:13px; margin-top:28px; }
-    @media (max-width:600px) { main { width:min(100% - 20px,1000px); padding-top:24px; } .package { align-items:flex-start; flex-direction:column; } }
+    :root {
+      color-scheme: dark;
+      --bg: #14100c;
+      --bg-glow: #241a10;
+      --panel: #1b1510;
+      --panel-2: #201810;
+      --line: #3a2c1c;
+      --line-soft: #2a2014;
+      --text: #f2e9d8;
+      --muted: #b3a288;
+      --muted-2: #7d715a;
+      --banana: #f4c430;
+      --banana-deep: #caa023;
+      --leaf: #93ab7e;
+      --danger: #e2836b;
+      --font-display: 'Space Grotesk', system-ui, sans-serif;
+      --font-body: 'IBM Plex Sans', system-ui, sans-serif;
+      --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(900px 420px at 12% -8%, var(--bg-glow), transparent 60%),
+        var(--bg);
+      color: var(--text);
+      font: 15px/1.6 var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+    main {
+      width: min(760px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 56px 0 72px;
+    }
+
+    /* ---------- hero ---------- */
+    .hero { display: flex; align-items: flex-end; gap: 18px; margin-bottom: 34px; }
+    .glyph {
+      flex: none;
+      width: 56px; height: 56px;
+      display: grid; place-items: center;
+      font-size: 30px;
+      background: var(--banana);
+      border-radius: 14px;
+      box-shadow: 0 10px 24px -8px #f4c43055;
+      transform: rotate(-6deg);
+    }
+    h1 {
+      margin: 0;
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: clamp(26px, 4.4vw, 38px);
+      letter-spacing: -0.02em;
+      line-height: 1.05;
+    }
+    .subtitle { margin: 6px 0 0; color: var(--muted); font-size: 14.5px; }
+
+    /* ---------- terminal-style console card ---------- */
+    .console {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      margin-bottom: 22px;
+      overflow: hidden;
+      box-shadow: 0 18px 40px -24px #000a;
+    }
+    .console-bar {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px 14px;
+      background: var(--panel-2);
+      border-bottom: 1px solid var(--line-soft);
+    }
+    .dot { width: 9px; height: 9px; border-radius: 50%; background: var(--line); }
+    .dot.a { background: #e2836b99; } .dot.b { background: #f4c43099; } .dot.c { background: #93ab7e99; }
+    .console-path {
+      margin-left: 6px;
+      font: 12px/1 var(--font-mono);
+      color: var(--muted-2);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .console-body { padding: 18px 18px 20px; }
+
+    .toolbar { display: flex; gap: 16px; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; }
+    #repo-title {
+      display: block;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      color: var(--text);
+    }
+    .status { color: var(--muted); font-size: 13px; margin-top: 3px; }
+    .status.error { color: var(--danger); }
+
+    .search-wrap { position: relative; flex: 1 1 220px; min-width: 180px; }
+    .search-wrap::before {
+      content: '/';
+      position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+      color: var(--muted-2); font-family: var(--font-mono); font-size: 13px; pointer-events: none;
+    }
+    input#search {
+      width: 100%;
+      padding: 9px 12px 9px 26px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--bg);
+      color: var(--text);
+      font: 13.5px var(--font-mono);
+      outline: none;
+      transition: border-color .15s ease;
+    }
+    input#search::placeholder { color: var(--muted-2); }
+    input#search:focus { border-color: var(--banana-deep); }
+
+    .envrow { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    .env {
+      font: 12px var(--font-mono);
+      color: var(--muted);
+      border: 1px solid var(--line-soft);
+      background: var(--bg);
+      border-radius: 6px;
+      padding: 4px 9px;
+    }
+    .env b { color: var(--banana); font-weight: 500; }
+
+    /* ---------- section headings ---------- */
+    h2 {
+      font-family: var(--font-display);
+      font-weight: 600;
+      font-size: 17px;
+      letter-spacing: -0.01em;
+      margin: 0 0 4px;
+    }
+    .section-note { color: var(--muted); font-size: 13.5px; margin: 0 0 14px; }
+
+    /* ---------- package list ---------- */
+    #packages { border-top: 1px solid var(--line-soft); }
+    .package {
+      display: flex; align-items: center; justify-content: space-between; gap: 14px;
+      padding: 12px 2px;
+      border-bottom: 1px solid var(--line-soft);
+      transition: background .12s ease;
+    }
+    .package:hover { background: #ffffff06; }
+    .package .name a {
+      display: flex; align-items: baseline; gap: 8px;
+      color: var(--text);
+      text-decoration: none;
+      font-family: var(--font-mono);
+      font-size: 13.5px;
+      overflow-wrap: anywhere;
+    }
+    .package .name a::before {
+      content: '▸';
+      color: var(--banana);
+      font-size: 11px;
+    }
+    .package .name a:hover { color: var(--banana); }
+    .kind { color: var(--leaf); font-size: 11px; font-family: var(--font-mono); margin-bottom: 2px; }
+    .package > .status { flex: none; font: 12px var(--font-mono); color: var(--muted-2); margin-top: 0; }
+    .empty { color: var(--muted); padding: 22px 2px; font-size: 13.5px; }
+
+    /* ---------- config block ---------- */
+    pre#config {
+      margin: 0;
+      font: 12.5px/1.7 var(--font-mono);
+      color: #f0e3c2;
+      background: var(--bg);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 16px 18px;
+      overflow: auto;
+    }
+    .hint {
+      display: flex; gap: 9px; align-items: flex-start;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .hint svg { flex: none; margin-top: 2px; }
+    code { font: 12.5px var(--font-mono); background: var(--panel-2); padding: 1px 6px; border-radius: 4px; color: var(--banana); }
+
+    footer {
+      color: var(--muted-2);
+      font-size: 12.5px;
+      margin-top: 30px;
+      padding-top: 18px;
+      border-top: 1px solid var(--line-soft);
+      line-height: 1.7;
+    }
+
+    @media (max-width: 560px) {
+      main { padding-top: 36px; }
+      .toolbar { flex-direction: column; }
+      .search-wrap { width: 100%; }
+    }
   </style>
 </head>
 <body>
 <main>
-  <header>
-    <div class="banana" aria-hidden="true">🍌</div>
+
+  <div class="hero">
+    <div class="glyph" aria-hidden="true">🍌</div>
     <div>
-      <h1>Muz · HirokiOS</h1>
-      <p class="subtitle">Arch uyumlu paket deposu</p>
+      <h1>HirokiOS Paket Deposu</h1>
+      <p class="subtitle">Muz ile kullanılan, Arch uyumlu x86_64 depo</p>
     </div>
-  </header>
+  </div>
 
-  <section class="card">
-    <div class="toolbar">
-      <div>
-        <strong id="repo-title">Depo okunuyor…</strong>
-        <div class="status" id="status">GitHub deposunun x86_64 klasörü taranıyor.</div>
+  <section class="console">
+    <div class="console-bar">
+      <span class="dot a"></span><span class="dot b"></span><span class="dot c"></span>
+      <span class="console-path">muz sync · x86_64</span>
+    </div>
+    <div class="console-body">
+      <div class="toolbar">
+        <div>
+          <strong id="repo-title">Depo okunuyor…</strong>
+          <div class="status" id="status">GitHub deposunun x86_64 klasörü taranıyor.</div>
+        </div>
+        <div class="search-wrap">
+          <input id="search" type="search" placeholder="paket ara" aria-label="Paketlerde ara">
+        </div>
       </div>
-      <input id="search" type="search" placeholder="Paketlerde ara…" aria-label="Paketlerde ara">
-    </div>
-    <div class="meta">
-      <span class="pill">Mimari: <strong>x86_64</strong></span>
-      <span class="pill">Kaynak: <strong id="branch-pill">main</strong></span>
-      <span class="pill">Paket: <strong id="count">0</strong></span>
+      <div class="envrow">
+        <span class="env">ARCH=<b>x86_64</b></span>
+        <span class="env">BRANCH=<b id="branch-pill">main</b></span>
+        <span class="env">PAKET=<b id="count">0</b></span>
+      </div>
     </div>
   </section>
 
-  <section class="card">
-    <h2>HirokiOS paketleri</h2>
-    <div id="packages" class="empty">Yükleniyor…</div>
+  <section class="console">
+    <div class="console-body">
+      <h2>Paketler</h2>
+      <p class="section-note">İndirmek için bir paket adına dokunun.</p>
+      <div id="packages" class="empty">Yükleniyor…</div>
+    </div>
   </section>
 
-  <section class="card">
-    <h2>Muz yapılandırması</h2>
-    <p>Bu adresi Muz/Pacman config dosyanıza ekleyin:</p>
-    <pre id="config">[HirokiOS]
+  <section class="console">
+    <div class="console-body">
+      <h2>Muz yapılandırması</h2>
+      <p class="section-note">Bu bloğu <code>pacman.conf</code> dosyanıza ekleyin.</p>
+      <pre id="config">[HirokiOS]
 SigLevel = Never
 Server = yükleniyor…/$arch</pre>
-    <p class="status">Bu sayfa yalnızca insanlara liste gösterir. Muz paketleri doğrudan <code>hiroki.db</code> ve paket dosyalarından okur; HTML dosyası DB oluşturmaz.</p>
+      <div class="hint">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+        <span>Bu sayfa yalnızca listeyi gösterir. Muz, paketleri doğrudan <code>hiroki.db</code> ve paket dosyalarından okur — HTML dosyası veritabanı oluşturmaz.</span>
+      </div>
+    </div>
   </section>
 
   <footer>
-    Paket veritabanı GitHub Actions ile güncellenir. Yeni paket eklemek için
-    <code>x86_64/</code> klasörüne <code>*.pkg.tar.zst</code> koyup push edin.
+    Paket veritabanı GitHub Actions ile güncellenir. Yeni paket eklemek için <code>x86_64/</code> klasörüne <code>*.pkg.tar.zst</code> koyup push edin.
   </footer>
 </main>
 <script>
