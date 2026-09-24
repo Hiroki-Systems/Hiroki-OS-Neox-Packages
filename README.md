@@ -12,7 +12,7 @@ ekleyin:
 ```ini
 [HirokiOS]
 SigLevel = Never
-Server = https://OWNER.github.io/REPO/$arch
+Server = https://hiroki-systems.github.io/Hiroki-OS-Neox-Packages/$arch
 ```
 
 `SigLevel = Never` yalnızca kendi GitHub hesabınız ve test makineniz için
