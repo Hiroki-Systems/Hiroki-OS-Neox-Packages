@@ -6,8 +6,9 @@ koyup `repo-add` ile veritabanını yeniden oluşturun.
 
 ## Config örneği (imzasız test deposu)
 
-Bu başlangıç paket deposu imzasız test içindir. Muz config dosyasına şunu
-ekleyin:
+Bu başlangıç paket deposu imzasız test içindir. `muz.conf` dosyasını doğrudan
+`/etc/pacman.d/muz.conf` olarak kopyalayıp `/etc/pacman.conf` içine
+`Include = /etc/pacman.d/*.conf` ekleyebilirsiniz.
 
 ```ini
 [HirokiOS]
@@ -16,8 +17,7 @@ Server = https://hiroki-systems.github.io/Hiroki-OS-Neox-Packages/$arch
 ```
 
 `SigLevel = Never` yalnızca kendi GitHub hesabınız ve test makineniz için
-kullanılmalıdır. Bu ayarda GitHub deposuna paket koyabilen veya bağlantıyı
-değiştirebilen biri root olarak paket kurdurabilir.
+kullanılmalıdır.
 
 ## Paket ekleme
 
